@@ -1,6 +1,6 @@
 package com.isep.trippy.Config;
 
-import com.isep.trippy.Services.UserService;
+import com.isep.trippy.Services.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
