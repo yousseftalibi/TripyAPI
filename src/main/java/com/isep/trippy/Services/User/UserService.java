@@ -1,5 +1,4 @@
 package com.isep.trippy.Services.User;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.isep.trippy.Models.ChatMessage;
@@ -83,7 +82,7 @@ public class UserService extends TextWebSocketHandler {
         return userRepository.usernameAlreadyTaken(username) ;
     }
 
-    public User getUser(int userId) throws SQLException {
+    public User getUserById(int userId) throws SQLException {
         User currentUser = new User();
 
         String getUserQuery = "SELECT * FROM users WHERE id = ?";
@@ -98,7 +97,29 @@ public class UserService extends TextWebSocketHandler {
         }
         return currentUser;
     }
-/*
+
+    public List<User> getFriends(User user) throws SQLException{
+        List<Integer> friendsIds = userRepository.getUserFriends(user);
+        List<User> friends = new ArrayList<>();
+        friendsIds.forEach( id -> {
+            try {
+                friends.add(getUserById(id));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return friends;
+    }
+
+    public void predictPlace(User user) throws SQLException {
+        List<User> friends = getFriends(user);
+        /*
+        train KNN on numbers xid.
+         */
+    }
+
+
+    /*
     @KafkaListener(topics= "chat-messages", groupId = "chat-group")
     public void listenChatMessage(@NotNull ConsumerRecord<String, String> record) throws IOException {
         Map<String, String> chatMessage = new HashMap<>();

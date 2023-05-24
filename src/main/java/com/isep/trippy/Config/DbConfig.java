@@ -17,7 +17,7 @@ public class DbConfig {
     public JdbcTemplate jdbcTemplate(){
 
 
-        String url = "jdbc:postgresql://dpg-cglesuu4dad69r7upa9g-a.frankfurt-postgres.render.com:5432/tripy";
+        String url = "jdbc:postgresql://dpg-cgle²suu4dad69r7upa9g-a.frankfurt-postgres.render.com:5432/tripy";
         String user = "admin";
         String pass = "RqrWKnc3gCJkTOnhO4PAk9Rt6BqQjdXV";
 

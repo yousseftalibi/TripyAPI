@@ -1,9 +1,11 @@
 package com.isep.trippy.Services;
 
 import com.isep.trippy.Models.Friend;
+import com.isep.trippy.Models.Place;
 import com.isep.trippy.Models.Traveller;
 import com.isep.trippy.Models.User;
 import com.isep.trippy.Repositories.TripsRepository;
+import com.isep.trippy.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -25,6 +27,9 @@ import java.util.List;
 public class TripsService {
     @Autowired
     TripsRepository _tripsRepository;
+
+    @Autowired
+    UserRepository _userRepository;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -62,5 +67,14 @@ public class TripsService {
         return friends;
     }
 
+    public void addVisit() throws SQLException {
+        User omayos = _userRepository.getUserById(1).get();
+        Place place = Place.builder().xid("100").rate(7).kinds("monument").build();
+        _tripsRepository.visitPlace(omayos, place);
+
+        //had {9,1}
+        //has to have {9, 1, 100}
+        //tested & confirmed
+    }
 
 }

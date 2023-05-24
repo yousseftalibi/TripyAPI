@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.TypeDef;
-import com.vladmihalcea.hibernate.type.array.StringArrayType;
+
 
 @Entity
 @Data
@@ -13,7 +12,6 @@ import com.vladmihalcea.hibernate.type.array.StringArrayType;
 @NoArgsConstructor
 @Builder
 @Table(name = "users")
-@TypeDef(name = "string-array", typeClass = StringArrayType.class)
 
 public class User {
     @Id
@@ -26,7 +24,7 @@ public class User {
     @Column(name="password")
     private String password;
 
-    @Column(name = "places", columnDefinition = "text[]")
+    @Column(name = "places")
     private String places;
 
 }

@@ -35,7 +35,7 @@ public class TripsController {
 
     @GetMapping(value = "/api/getUserPlaces/{id}")
     public String[] getUserPlaces(@PathVariable int id) throws SQLException {
-         User user = _userService.getUser(id);
+         User user = _userService.getUserById(id);
          String places = user.getPlaces();
          places = places.replace("{", "");
          places = places.replace("}", "");
@@ -43,4 +43,8 @@ public class TripsController {
          return array;
     }
 
+    @GetMapping(value="/api/addTrip")
+    public void addTrip() throws SQLException {
+        _tripsService.addVisit();
+    }
 }
