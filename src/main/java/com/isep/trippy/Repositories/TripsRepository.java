@@ -21,17 +21,6 @@ public class TripsRepository {
 
     @Autowired
     Connection connection;
-    public void addTraveller(Traveller _traveller) throws SQLException {
-        String addTraveller = "INSERT INTO Travellers (first_name, last_name, email, phone_number, nationality, city) values (?, ?, ?, ?, ?, ?)";
-        PreparedStatement ps = connection.prepareStatement(addTraveller);
-        ps.setString(1, _traveller.getFirst_name());
-        ps.setString(2, _traveller.getLast_name());
-        ps.setString(3, _traveller.getEmail());
-        ps.setInt(4, _traveller.getPhone_number());
-        ps.setString(5, _traveller.getNationality());
-        ps.setString(6, _traveller.getCity());
-        ps.executeUpdate();
-    }
 
     public Array getVisitedPlaces (User user) throws SQLException{
         String getVisitedPlaces = "SELECT places FROM users where id = ?";
@@ -40,20 +29,52 @@ public class TripsRepository {
         var result = ps.executeQuery();
         return result.next() ? result.getArray("places") : null;
     }
-    public void visitPlace(User user, Place visitedNewPlace) throws SQLException {
+    public void addVisitedToUser(User user, Place visitedNewPlace) throws SQLException {
         Array sqlArray = getVisitedPlaces(user);
         String[] visitedPlacesArray = (String[]) sqlArray.getArray();
         List<String> visitedPlaces = new ArrayList<>(Arrays.asList(visitedPlacesArray));
-        visitedPlaces.add(visitedNewPlace.xid);
 
-        String addVisitedPlace = "UPDATE users SET places = ? WHERE id = ?";
-        PreparedStatement ps = connection.prepareStatement(addVisitedPlace);
+        if(!visitedPlaces.contains(visitedNewPlace.getXid())){
+            visitedPlaces.add(visitedNewPlace.xid);
+            String addVisitedPlaceToUser = "UPDATE users SET places = ? WHERE id = ?";
+            PreparedStatement ps = connection.prepareStatement(addVisitedPlaceToUser);
+            Array updatedPlaces = connection.createArrayOf("text", visitedPlaces.toArray());
+            ps.setArray(1, updatedPlaces);
+            ps.setInt(2, user.getId());
+            ps.executeUpdate();
+        }
+    }
 
-        Array updatedPlaces = connection.createArrayOf("text", visitedPlaces.toArray());
-        ps.setArray(1, updatedPlaces);
-        ps.setInt(2, user.getId());
+      public Place getPlaceById(String xid) throws SQLException {
+        String getPlaceByIdQuery = "SELECT * FROM places WHERE xid = ?";
+        PreparedStatement ps = connection.prepareStatement(getPlaceByIdQuery);
+        ps.setString(1, xid);
+        var result = ps.executeQuery();
+        if(result.next()){
+            return Place.builder().xid(result.getString("xid")).rate(result.getInt("rate")).kinds(result.getString("kinds")).dist(result.getDouble("dist")).name(result.getString("name")).build();
+        }   
+        return null;
+    }
+
+    public Boolean placeAlreadyExists (Place place) throws SQLException {
+        String placeExistsQuery = "SELECT * FROM places WHERE xid = ?";
+        PreparedStatement ps = connection.prepareStatement(placeExistsQuery);
+        ps.setString(1, place.xid);
+        var result = ps.executeQuery();
+       return result.next();
+    }
+    
+    public void addPlaceToVisitedPlaces (Place place) throws SQLException {
+        String visitPlaceQuery = "INSERT INTO places (xid, rate, kinds, dist, name) values (?, ?, ?, ?, ?)";
+        PreparedStatement ps = connection.prepareStatement(visitPlaceQuery);
+        ps.setString(1, place.xid);
+        ps.setInt(2, place.rate);
+        ps.setString(3, place.kinds);
+        ps.setDouble(4, place.dist);
+        ps.setString(5, place.name);
         ps.executeUpdate();
     }
+
 
 
 }

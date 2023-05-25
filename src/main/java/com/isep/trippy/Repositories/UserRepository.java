@@ -25,11 +25,11 @@ public class UserRepository {
     Connection connection;
 
     public Boolean usernameAlreadyTaken(String username) throws SQLException {
-        String query = "SELECT count(username) FROM users WHERE username = ?";
+        String query = "SELECT count(username) as count FROM users WHERE username = ?";
         PreparedStatement ps = connection.prepareStatement(query);
         ps.setString(1, username);
         var result = ps.executeQuery();
-        return result.next();
+        return !result.next();
     }
 
     public Optional<User> getUserById(int id) throws SQLException{
@@ -69,16 +69,13 @@ public class UserRepository {
         }
 
     }
-    public void registerUser(User user) throws SQLException {
+    public void registerUser(String username, String password) throws SQLException {
         String createUser = "INSERT INTO users (username, password) values (?, ?)";
         PreparedStatement ps = connection.prepareStatement(createUser);
-        ps.setString(1, user.getUsername());
-        ps.setString(2, user.getPassword());
+        ps.setString(1, username);
+        ps.setString(2, password);
         ps.executeUpdate();
     }
-
-
-
 
 
 }

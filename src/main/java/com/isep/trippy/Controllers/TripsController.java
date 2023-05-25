@@ -1,12 +1,12 @@
 package com.isep.trippy.Controllers;
 
-import com.isep.trippy.Models.Friend;
-import com.isep.trippy.Models.Traveller;
+
+import com.isep.trippy.Models.Place;
 import com.isep.trippy.Models.User;
 import com.isep.trippy.Services.TripsService;
 import com.isep.trippy.Services.User.UserService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
@@ -22,17 +22,6 @@ public class TripsController {
     @Autowired
     UserService _userService;
 
-    @PostMapping(value="/api/addTraveller")
-    public ResponseEntity<Traveller> addTraveller(@RequestBody Traveller _traveller){
-       // _tripsService.addTraveller(_traveller);
-        return ResponseEntity.ok(_traveller);
-    }
-
-    @GetMapping(value ="/api/getFriends/{id}")
-    public ResponseEntity<List<Friend>> getFriends(@PathVariable int id) throws SQLException {
-       return ResponseEntity.ok(_tripsService.suggestTrip(id));
-    }
-
     @GetMapping(value = "/api/getUserPlaces/{id}")
     public String[] getUserPlaces(@PathVariable int id) throws SQLException {
          User user = _userService.getUserById(id);
@@ -43,8 +32,16 @@ public class TripsController {
          return array;
     }
 
-    @GetMapping(value="/api/addTrip")
-    public void addTrip() throws SQLException {
-        _tripsService.addVisit();
+    @PostMapping(value="/api/visitPlace")
+    public void visitPlace(@RequestParam @NotNull Integer userId, @RequestBody @NotNull Place place) throws SQLException {
+        _tripsService.visitPlace(userId, place);
     }
+
+    @GetMapping(value="/api/recommendTrips/{id}")
+    public List<Place> recommendTrips(@PathVariable int id)  {
+        return _tripsService.getDestinationRecommendation(id);
+    }
+
+
+    
 }

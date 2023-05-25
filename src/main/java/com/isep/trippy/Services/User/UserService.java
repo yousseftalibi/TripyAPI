@@ -2,17 +2,26 @@ package com.isep.trippy.Services.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.isep.trippy.Models.ChatMessage;
+import com.isep.trippy.Models.Place;
 import com.isep.trippy.Models.User;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.isep.trippy.Repositories.UserRepository;
+
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -68,9 +77,9 @@ public class UserService extends TextWebSocketHandler {
         //kafkaTemplate.send("chat-messages", mymessage.getId()+": "+mymessage.getMessage());
     }
 
-    public Boolean registerUser(User user) throws SQLException {
-        userRepository.registerUser(user);
-        return userRepository.getUserById(user.getId()).isPresent();
+    public Boolean registerUser(String username, String password) throws SQLException {
+        userRepository.registerUser(username, password);
+        return userRepository.getUserByUsername(username).isPresent();
     }
 
     public Boolean loginUser(User user) throws SQLException {
@@ -111,13 +120,7 @@ public class UserService extends TextWebSocketHandler {
         return friends;
     }
 
-    public void predictPlace(User user) throws SQLException {
-        List<User> friends = getFriends(user);
-        /*
-        train KNN on numbers xid.
-         */
-    }
-
+    
 
     /*
     @KafkaListener(topics= "chat-messages", groupId = "chat-group")

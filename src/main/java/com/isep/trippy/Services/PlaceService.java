@@ -9,16 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 
 public class PlaceService {
-        @Autowired
+    @Autowired
         private KafkaTemplate<String, String> kafkaTemplate;
-
-       public void sendMessage(String message){
-            kafkaTemplate.send("my-topic", message);
-        }
-        @KafkaListener(topics = "my-topic-uppercase", groupId = "my-group")
-        public void listenUppercase(ConsumerRecord<String, String> record){
-            System.out.println(record.value() );
-        }
 
 
 
